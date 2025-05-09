@@ -18,7 +18,7 @@ public class AdminAccessLoggingAspect {
 
     private final HttpServletRequest request;
 
-    @After("execution(* org.example.expert.domain.user.controller.UserController.getUser(..))")
+    @After("execution(* org.example.expert.domain.user.controller.UserAdminController.changeUserRole(..))") // aop 적용될 포인트컷 변경
     public void logAfterChangeUserRole(JoinPoint joinPoint) {
         String userId = String.valueOf(request.getAttribute("userId"));
         String requestUrl = request.getRequestURI();
