@@ -38,3 +38,6 @@ out/
 
 ### properties ###
 *.properties
+
+### Querydsl ###
+/src/main/generated

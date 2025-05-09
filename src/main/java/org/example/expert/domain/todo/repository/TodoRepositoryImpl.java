@@ -4,12 +4,19 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.domain.todo.entity.Todo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.Predicate;
+import org.example.expert.domain.todo.entity.QTodo;
+import org.example.expert.domain.user.entity.QUser;
+
 
 // Custom에 선언된 메서드를 JPQL로 직접 구현
 @Repository
@@ -17,6 +24,8 @@ import org.springframework.stereotype.Repository;
 public class TodoRepositoryImpl implements TodoRepositoryCustom {
 
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
+
 
     @Override
     public Page<Todo> searchTodos(String weather, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
@@ -51,5 +60,20 @@ public class TodoRepositoryImpl implements TodoRepositoryCustom {
         List<Todo> content = query.getResultList();
         // page로 변환
         return new PageImpl<>(content, pageable, content.size());
+    }
+
+    // QueryDSL 구현
+    @Override
+    public Optional<Todo> findByIdWithUser(Long todoId) {
+        QTodo todo = QTodo.todo;
+        QUser user = QUser.user;
+
+        Todo result = queryFactory
+            .selectFrom(todo)
+            .leftJoin(todo.user, user).fetchJoin()
+            .where(todo.id.eq(todoId))
+            .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }
