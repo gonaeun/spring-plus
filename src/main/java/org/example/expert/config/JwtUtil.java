@@ -18,7 +18,7 @@ import java.util.Date;
 
 @Slf4j(topic = "JwtUtil")
 @Component
-public class JwtUtil {
+public class JwtUtil {  // JWT 생성 및 검증
 
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
@@ -34,6 +34,7 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
+    // 사용자 정보가 포함된 JWT 생성
     public String createToken(Long userId, String email, UserRole userRole, String nickname) {
         Date date = new Date();
 
@@ -49,6 +50,7 @@ public class JwtUtil {
                         .compact();
     }
 
+    // Bearer 접두사 제거
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
@@ -56,6 +58,7 @@ public class JwtUtil {
         throw new ServerException("Not Found Token");
     }
 
+    // JWT 파싱 및 클레임 추출
     public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)

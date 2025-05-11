@@ -12,8 +12,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+// 유저 정보 주입
 public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
+    // @Auth 어노테이션과 AuthUser 타입이 동시에 있는 경우에만 처리됨
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasAuthAnnotation = parameter.getParameterAnnotation(Auth.class) != null;
@@ -27,6 +29,7 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
         return hasAuthAnnotation;
     }
 
+    // JwtFilter에서 저장한 값을 꺼내서 AuthUser 객체 생성
     @Override
     public Object resolveArgument(
             @Nullable MethodParameter parameter,
